@@ -1,7 +1,10 @@
 package com.graduation.model;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class DaBian implements Serializable{
 	
 	private Integer id;

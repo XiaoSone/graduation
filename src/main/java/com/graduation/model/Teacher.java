@@ -1,5 +1,10 @@
 package com.graduation.model;
 
+import lombok.Data;
+
+import java.util.List;
+
+@Data
 public class Teacher {
     //教师id
     private String teacherId;
@@ -14,52 +19,11 @@ public class Teacher {
     //职称
     private String zhicheng;
 
-    //get and set
-    public String getTeacherId() {
-        return teacherId;
-    }
+    private User user;
 
-    public void setTeacherId(String teacherId) {
-        this.teacherId = teacherId;
-    }
+    private Integer noChooseProject;
 
-    public String getTeacherDescribe() {
-        return teacherDescribe;
-    }
+    private List<Project> projectList;
 
-    public void setTeacherDescribe(String teacherDescribe) {
-        this.teacherDescribe = teacherDescribe;
-    }
-
-    public String getTeacherProjectNum() {
-        return teacherProjectNum;
-    }
-
-    public void setTeacherProjectNum(String teacherProjectNum) {
-        this.teacherProjectNum = teacherProjectNum;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public Integer getDeptId() {
-        return deptId;
-    }
-
-    public void setDeptId(Integer deptId) {
-        this.deptId = deptId;
-    }
-
-    public String getZhicheng() {
-        return zhicheng;
-    }
-
-    public void setZhicheng(String zhicheng) {
-        this.zhicheng = zhicheng;
-    }
+    private Dept dept;
 }

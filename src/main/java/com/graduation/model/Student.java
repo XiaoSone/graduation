@@ -1,5 +1,8 @@
 package com.graduation.model;
 
+import lombok.Data;
+
+@Data
 public class Student {
     //学生id
     private String studentId;
@@ -21,6 +24,16 @@ public class Student {
     private String teacherEvaluate;
     //验收团队id
     private String yansouTeamId;
+
+    private User user;
+    private Project project;
+    private ClassInfo classInfo;
+    private Teacher teacher;
+    private Ktbg ktbg;
+    private Zqjc zqjc;
+    private Mdb mdb;
+    private Lunwen lunwen;
+    private DaBian daBian;
 
     public String getStudentId() {
         return studentId;
