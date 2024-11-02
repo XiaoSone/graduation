@@ -80,7 +80,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>com.example.graduation.GraduationApplication</mainClass>
+                    <mainClass>com.graduation.GraduationApplication</mainClass>
                     <skip>true</skip>
                 </configuration>
                 <executions>
