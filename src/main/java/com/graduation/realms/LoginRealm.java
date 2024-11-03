@@ -5,6 +5,7 @@ import com.graduation.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.AuthenticatingRealm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
 public class LoginRealm extends AuthenticatingRealm{
 	
@@ -12,6 +13,7 @@ public class LoginRealm extends AuthenticatingRealm{
 	private UserService userService;
 
 	@Override
+    //@Bean
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         System.out.println("doGetAuthenticationInfo1:"+token.hashCode());
         //1.将AuthenticationToken强转为UsernamePasswordToken

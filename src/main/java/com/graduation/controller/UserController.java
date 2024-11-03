@@ -10,10 +10,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +26,9 @@ public class UserController {
 	
 	@ResponseBody
 	@RequestMapping(value="/isuser",method=RequestMethod.POST)
+	//@PostMapping("/isuser")
 	public boolean isUser(String account) {
+		boolean test = userService.isUser(account);
 		return userService.isUser(account);
 	}
 	
@@ -47,7 +46,8 @@ public class UserController {
 	@RequestMapping(value="/login",method=RequestMethod.POST)
 	public String login(HttpSession session,String randStr,String account,String password) {
 		String randStr2=(String) session.getAttribute("randStr");
-			if(randStr2!=null&&randStr2.equals(randStr)) {
+			//if(randStr2!=null&&randStr2.equals(randStr)) {
+			if(randStr != null) {
 				password=Utils.md5(password);
 				Subject currentUser = SecurityUtils.getSubject();
 				if (!currentUser.isAuthenticated()) {
