@@ -18,33 +18,31 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 
 @Controller
-@RequestMapping("/userController")
+//@RequestMapping("/userController")
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
-	
-	@ResponseBody
-	@RequestMapping(value="/isuser",method=RequestMethod.POST)
-	//@PostMapping("/isuser")
-	public boolean isUser(String account) {
-		boolean test = userService.isUser(account);
+
+	//确认用户
+	@PostMapping("/isuser")
+	public @ResponseBody User isUser(@RequestParam String account) {
+		//boolean test = userService.isUser(account);
 		return userService.isUser(account);
+
 	}
-	
-	@ResponseBody
-	@RequestMapping(value="/ispassword",method=RequestMethod.POST)
-	public boolean ispassword(@RequestParam("password")String password,HttpSession session) {
+	//确认密码
+	@PostMapping("/ispassword")
+	public @ResponseBody boolean ispassword(@RequestParam("password")String password,HttpSession session) {
 		User user = (User) session.getAttribute("user");
 		if(user!=null) {
 			return userService.ispassword(Utils.md5(password),user.getUserId());
 		}
 		return false;
 	}
-	
-	@ResponseBody
-	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public String login(HttpSession session,String randStr,String account,String password) {
+	//登录
+	@PostMapping("/login")
+	public @ResponseBody String login(HttpSession session,String randStr,String account,String password) {
 		String randStr2=(String) session.getAttribute("randStr");
 			//if(randStr2!=null&&randStr2.equals(randStr)) {
 			if(randStr != null) {
@@ -57,48 +55,50 @@ public class UserController {
 		            	//执行登录
 		                currentUser.login(token);
 		                return toUI(session,account,password);
+						//return "登录成功";
 		            }
 		            //用户不存在
 		            catch (UnknownAccountException ae) {
-		            	return "passwordError";
+		            	return "用户不存在";
 		            }
 		            //用户被锁定
 		            catch (LockedAccountException e) {
-		            	return "passwordError";
+		            	return "用户名或密码错误";
 					}
 				}else {
 					return toUI(session,account,password);
 				}
 			}else {
-				return "randStrError";
+				return "验证码错误";
 			}
 	}
-	
+	//登录成功跳转
 	private String toUI(HttpSession session,String account,String password) {
 		User user = userService.login(account, password);
 		if(user!=null) {
 			if(2==user.getUserRoles()) {
 				session.setAttribute("user", user);
-				return "student/sindex.html";
+				//return "student/sindex.html";
+				return "学生登录成功";
 			}
 			if(1==user.getUserRoles()) {
 				session.setAttribute("user", user);
-				return "teacher/tindex.html";
+				//return "teacher/tindex.html";
+				return "教师登录成功";
 			}
 		}
-		return "passwordError";
+		return "用户名或密码错误";
 	}
-	
+	//退出登录
 	@RequestMapping("/logout")
-	public String logout(HttpSession session) {
+	public @ResponseBody String logout(HttpSession session) {
 		session.removeAttribute("user");
-		return "redirect:http://localhost:8080/graduation/login.html";
+		//return "redirect:http://localhost:8080/graduation/login.html";
+		return "退出成功";
 	}
-	
-	
-	@ResponseBody
+	//更新用户信息
 	@RequestMapping(value="/updateInfo",method=RequestMethod.POST)
-	public boolean updateStudentInfo(User user,
+	public @ResponseBody boolean updateStudentInfo(User user,
 			@RequestParam(value="portrait",required=false)MultipartFile portrait,HttpServletRequest request) {
 		if(portrait!=null&&portrait.getSize()>0) {
 			if(portrait.getSize()>(10*1024*1024)) {
@@ -120,10 +120,9 @@ public class UserController {
 		}
 		return userService.updateUserInfo(user);
 	}
-	
-	@ResponseBody
+	//更新密码
 	@RequestMapping(value="/updatePwd",method=RequestMethod.PUT)
-	public boolean updateStudentPwd(User user,HttpSession session) {
+	public @ResponseBody boolean updateStudentPwd(User user,HttpSession session) {
 		String password=user.getUserPassword();
 		if(password!=null&&!password.isEmpty()) {
 			user.setUserPassword(Utils.md5(password));

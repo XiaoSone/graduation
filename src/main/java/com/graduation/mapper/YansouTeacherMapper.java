@@ -4,6 +4,7 @@ import com.graduation.model.YansouTeacher;
 import com.graduation.model.YansouTeacherExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

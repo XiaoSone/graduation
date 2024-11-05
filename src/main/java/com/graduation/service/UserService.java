@@ -13,13 +13,13 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    @Transactional(propagation= Propagation.SUPPORTS)
-    public boolean isUser(String account) {
+    //@Transactional(propagation= Propagation.SUPPORTS)
+    public User isUser(String account) {
         User user = userMapper.isUser(account);
         if(user!=null) {
-            return true;
+            return user;
         }
-        return false;
+        return null;
     }
 
     @Transactional(propagation=Propagation.SUPPORTS)

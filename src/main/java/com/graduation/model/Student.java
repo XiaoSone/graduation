@@ -2,8 +2,10 @@ package com.graduation.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Student {
+public class Student implements Serializable {
     //学生id
     private String studentId;
     //项目数

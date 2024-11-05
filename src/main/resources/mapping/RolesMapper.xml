@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.graduation.mapper.DeptMapper">
-<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
-  <resultMap id="BaseResultMap" type="com.graduation.model.Dept">
-    <id column="dept_id" jdbcType="INTEGER" property="deptId" />
-    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+<mapper namespace="com.graduation.mapper.RolesMapper">
+<!--<cache type="org.mybatis.caches.redis.RedisCache"/>-->
+  <resultMap id="BaseResultMap" type="com.graduation.model.Roles">
+    <id column="roles_id" jdbcType="INTEGER" property="rolesId" />
+    <result column="roles_name" jdbcType="CHAR" property="rolesName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,15 +65,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    dept_id, dept_name
+    roles_id, roles_name
   </sql>
-  <select id="selectByExample" parameterType="com.graduation.model.DeptExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.graduation.model.RolesExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from dept
+    from roles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -84,56 +84,56 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from dept
-    where dept_id = #{deptId,jdbcType=INTEGER}
+    from roles
+    where roles_id = #{rolesId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from dept
-    where dept_id = #{deptId,jdbcType=INTEGER}
+    delete from roles
+    where roles_id = #{rolesId,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.graduation.model.DeptExample">
-    delete from dept
+  <delete id="deleteByExample" parameterType="com.graduation.model.RolesExample">
+    delete from roles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.graduation.model.Dept">
-    insert into dept (dept_id, dept_name)
-    values (#{deptId,jdbcType=INTEGER}, #{deptName,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.graduation.model.Roles">
+    insert into roles (roles_id, roles_name)
+    values (#{rolesId,jdbcType=INTEGER}, #{rolesName,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.graduation.model.Dept">
-    insert into dept
+  <insert id="insertSelective" parameterType="com.graduation.model.Roles">
+    insert into roles
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="deptId != null">
-        dept_id,
+      <if test="rolesId != null">
+        roles_id,
       </if>
-      <if test="deptName != null">
-        dept_name,
+      <if test="rolesName != null">
+        roles_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="deptId != null">
-        #{deptId,jdbcType=INTEGER},
+      <if test="rolesId != null">
+        #{rolesId,jdbcType=INTEGER},
       </if>
-      <if test="deptName != null">
-        #{deptName,jdbcType=VARCHAR},
+      <if test="rolesName != null">
+        #{rolesName,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.graduation.model.DeptExample" resultType="java.lang.Long">
-    select count(*) from dept
+  <select id="countByExample" parameterType="com.graduation.model.RolesExample" resultType="java.lang.Long">
+    select count(*) from roles
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update dept
+    update roles
     <set>
-      <if test="record.deptId != null">
-        dept_id = #{record.deptId,jdbcType=INTEGER},
+      <if test="record.rolesId != null">
+        roles_id = #{record.rolesId,jdbcType=INTEGER},
       </if>
-      <if test="record.deptName != null">
-        dept_name = #{record.deptName,jdbcType=VARCHAR},
+      <if test="record.rolesName != null">
+        roles_name = #{record.rolesName,jdbcType=CHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -141,25 +141,25 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update dept
-    set dept_id = #{record.deptId,jdbcType=INTEGER},
-      dept_name = #{record.deptName,jdbcType=VARCHAR}
+    update roles
+    set roles_id = #{record.rolesId,jdbcType=INTEGER},
+      roles_name = #{record.rolesName,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Dept">
-    update dept
+  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Roles">
+    update roles
     <set>
-      <if test="deptName != null">
-        dept_name = #{deptName,jdbcType=VARCHAR},
+      <if test="rolesName != null">
+        roles_name = #{rolesName,jdbcType=CHAR},
       </if>
     </set>
-    where dept_id = #{deptId,jdbcType=INTEGER}
+    where roles_id = #{rolesId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Dept">
-    update dept
-    set dept_name = #{deptName,jdbcType=VARCHAR}
-    where dept_id = #{deptId,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Roles">
+    update roles
+    set roles_name = #{rolesName,jdbcType=CHAR}
+    where roles_id = #{rolesId,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.graduation.mapper.ClassInfoMapper">
-<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
-  <resultMap id="BaseResultMap" type="com.graduation.model.ClassInfo">
-    <id column="class_id" jdbcType="INTEGER" property="classId" />
-    <result column="class_name" jdbcType="VARCHAR" property="className" />
-    <result column="grade_id" jdbcType="INTEGER" property="gradeId" />
-    <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
+<mapper namespace="com.graduation.mapper.WorkTimeMapper">
+<!--<cache type="org.mybatis.caches.redis.RedisCache"/>-->
+  <resultMap id="BaseResultMap" type="com.graduation.model.WorkTime">
+    <id column="work_time_id" jdbcType="INTEGER" property="workTimeId" />
+    <result column="work_time_info" jdbcType="VARCHAR" property="workTimeInfo" />
+    <result column="work_time_start" jdbcType="TIMESTAMP" property="workTimeStart" />
+    <result column="work_time_end" jdbcType="TIMESTAMP" property="workTimeEnd" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,15 +67,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    class_id, class_name, grade_id, subject_id
+    work_time_id, work_time_info, work_time_start, work_time_end
   </sql>
-  <select id="selectByExample" parameterType="com.graduation.model.ClassInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.graduation.model.WorkTimeExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from class_info
+    from work_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -86,76 +86,76 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from class_info
-    where class_id = #{classId,jdbcType=INTEGER}
+    from work_time
+    where work_time_id = #{workTimeId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from class_info
-    where class_id = #{classId,jdbcType=INTEGER}
+    delete from work_time
+    where work_time_id = #{workTimeId,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.graduation.model.ClassInfoExample">
-    delete from class_info
+  <delete id="deleteByExample" parameterType="com.graduation.model.WorkTimeExample">
+    delete from work_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.graduation.model.ClassInfo">
-    insert into class_info (class_id, class_name, grade_id, 
-      subject_id)
-    values (#{classId,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR}, #{gradeId,jdbcType=INTEGER}, 
-      #{subjectId,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.graduation.model.WorkTime">
+    insert into work_time (work_time_id, work_time_info, work_time_start, 
+      work_time_end)
+    values (#{workTimeId,jdbcType=INTEGER}, #{workTimeInfo,jdbcType=VARCHAR}, #{workTimeStart,jdbcType=TIMESTAMP}, 
+      #{workTimeEnd,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.graduation.model.ClassInfo">
-    insert into class_info
+  <insert id="insertSelective" parameterType="com.graduation.model.WorkTime">
+    insert into work_time
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="classId != null">
-        class_id,
+      <if test="workTimeId != null">
+        work_time_id,
       </if>
-      <if test="className != null">
-        class_name,
+      <if test="workTimeInfo != null">
+        work_time_info,
       </if>
-      <if test="gradeId != null">
-        grade_id,
+      <if test="workTimeStart != null">
+        work_time_start,
       </if>
-      <if test="subjectId != null">
-        subject_id,
+      <if test="workTimeEnd != null">
+        work_time_end,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="classId != null">
-        #{classId,jdbcType=INTEGER},
+      <if test="workTimeId != null">
+        #{workTimeId,jdbcType=INTEGER},
       </if>
-      <if test="className != null">
-        #{className,jdbcType=VARCHAR},
+      <if test="workTimeInfo != null">
+        #{workTimeInfo,jdbcType=VARCHAR},
       </if>
-      <if test="gradeId != null">
-        #{gradeId,jdbcType=INTEGER},
+      <if test="workTimeStart != null">
+        #{workTimeStart,jdbcType=TIMESTAMP},
       </if>
-      <if test="subjectId != null">
-        #{subjectId,jdbcType=INTEGER},
+      <if test="workTimeEnd != null">
+        #{workTimeEnd,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.graduation.model.ClassInfoExample" resultType="java.lang.Long">
-    select count(*) from class_info
+  <select id="countByExample" parameterType="com.graduation.model.WorkTimeExample" resultType="java.lang.Long">
+    select count(*) from work_time
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update class_info
+    update work_time
     <set>
-      <if test="record.classId != null">
-        class_id = #{record.classId,jdbcType=INTEGER},
+      <if test="record.workTimeId != null">
+        work_time_id = #{record.workTimeId,jdbcType=INTEGER},
       </if>
-      <if test="record.className != null">
-        class_name = #{record.className,jdbcType=VARCHAR},
+      <if test="record.workTimeInfo != null">
+        work_time_info = #{record.workTimeInfo,jdbcType=VARCHAR},
       </if>
-      <if test="record.gradeId != null">
-        grade_id = #{record.gradeId,jdbcType=INTEGER},
+      <if test="record.workTimeStart != null">
+        work_time_start = #{record.workTimeStart,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.subjectId != null">
-        subject_id = #{record.subjectId,jdbcType=INTEGER},
+      <if test="record.workTimeEnd != null">
+        work_time_end = #{record.workTimeEnd,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -163,47 +163,40 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update class_info
-    set class_id = #{record.classId,jdbcType=INTEGER},
-      class_name = #{record.className,jdbcType=VARCHAR},
-      grade_id = #{record.gradeId,jdbcType=INTEGER},
-      subject_id = #{record.subjectId,jdbcType=INTEGER}
+    update work_time
+    set work_time_id = #{record.workTimeId,jdbcType=INTEGER},
+      work_time_info = #{record.workTimeInfo,jdbcType=VARCHAR},
+      work_time_start = #{record.workTimeStart,jdbcType=TIMESTAMP},
+      work_time_end = #{record.workTimeEnd,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.ClassInfo">
-    update class_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.WorkTime">
+    update work_time
     <set>
-      <if test="className != null">
-        class_name = #{className,jdbcType=VARCHAR},
+      <if test="workTimeInfo != null">
+        work_time_info = #{workTimeInfo,jdbcType=VARCHAR},
       </if>
-      <if test="gradeId != null">
-        grade_id = #{gradeId,jdbcType=INTEGER},
+      <if test="workTimeStart != null">
+        work_time_start = #{workTimeStart,jdbcType=TIMESTAMP},
       </if>
-      <if test="subjectId != null">
-        subject_id = #{subjectId,jdbcType=INTEGER},
+      <if test="workTimeEnd != null">
+        work_time_end = #{workTimeEnd,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where class_id = #{classId,jdbcType=INTEGER}
+    where work_time_id = #{workTimeId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.graduation.model.ClassInfo">
-    update class_info
-    set class_name = #{className,jdbcType=VARCHAR},
-      grade_id = #{gradeId,jdbcType=INTEGER},
-      subject_id = #{subjectId,jdbcType=INTEGER}
-    where class_id = #{classId,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="com.graduation.model.WorkTime">
+    update work_time
+    set work_time_info = #{workTimeInfo,jdbcType=VARCHAR},
+      work_time_start = #{workTimeStart,jdbcType=TIMESTAMP},
+      work_time_end = #{workTimeEnd,jdbcType=TIMESTAMP}
+    where work_time_id = #{workTimeId,jdbcType=INTEGER}
   </update>
   
-  <resultMap type="com.graduation.model.ClassInfo" id="classPlus" extends="BaseResultMap">
-  	<association property="grade" column="grade_id" select="com.graduation.mapper.GradeMapper.selectByPrimaryKey"></association>
-  	<association property="subject" column="subject_id" select="com.graduation.mapper.SubjectMapper.selectByPrimaryKey"></association>
-  </resultMap>
-  <select id="selectProjectAndGradeAndSubjectByCid" parameterType="java.lang.Integer" resultMap="classPlus">
-    select 
-    <include refid="Base_Column_List" />
-    from class_info
-    where class_id = #{classId,jdbcType=INTEGER}
+  <select id="getWorkTime" resultType="com.graduation.model.WorkTime">
+  	select work_time_info from work_time where #{thisDate} BETWEEN work_time_start AND work_time_end
   </select>
   
 </mapper>

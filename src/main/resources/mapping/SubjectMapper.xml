@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.graduation.mapper.AdminMapper">
-<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
-  <resultMap id="BaseResultMap" type="com.graduation.model.Admin">
-    <id column="admin_id" jdbcType="CHAR" property="adminId" />
-    <result column="user_id" jdbcType="CHAR" property="userId" />
+<mapper namespace="com.graduation.mapper.SubjectMapper">
+<!--<cache type="org.mybatis.caches.redis.RedisCache"/>-->
+  <resultMap id="BaseResultMap" type="com.graduation.model.Subject">
+    <id column="subject_id" jdbcType="INTEGER" property="subjectId" />
+    <result column="subject_name" jdbcType="VARCHAR" property="subjectName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,15 +65,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    admin_id, user_id
+    subject_id, subject_name
   </sql>
-  <select id="selectByExample" parameterType="com.graduation.model.AdminExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.graduation.model.SubjectExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from admin
+    from subject
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -81,59 +81,59 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from admin
-    where admin_id = #{adminId,jdbcType=CHAR}
+    from subject
+    where subject_id = #{subjectId,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from admin
-    where admin_id = #{adminId,jdbcType=CHAR}
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from subject
+    where subject_id = #{subjectId,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.graduation.model.AdminExample">
-    delete from admin
+  <delete id="deleteByExample" parameterType="com.graduation.model.SubjectExample">
+    delete from subject
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.graduation.model.Admin">
-    insert into admin (admin_id, user_id)
-    values (#{adminId,jdbcType=CHAR}, #{userId,jdbcType=CHAR})
+  <insert id="insert" parameterType="com.graduation.model.Subject">
+    insert into subject (subject_id, subject_name)
+    values (#{subjectId,jdbcType=INTEGER}, #{subjectName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.graduation.model.Admin">
-    insert into admin
+  <insert id="insertSelective" parameterType="com.graduation.model.Subject">
+    insert into subject
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="adminId != null">
-        admin_id,
+      <if test="subjectId != null">
+        subject_id,
       </if>
-      <if test="userId != null">
-        user_id,
+      <if test="subjectName != null">
+        subject_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="adminId != null">
-        #{adminId,jdbcType=CHAR},
+      <if test="subjectId != null">
+        #{subjectId,jdbcType=INTEGER},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=CHAR},
+      <if test="subjectName != null">
+        #{subjectName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.graduation.model.AdminExample" resultType="java.lang.Long">
-    select count(*) from admin
+  <select id="countByExample" parameterType="com.graduation.model.SubjectExample" resultType="java.lang.Long">
+    select count(*) from subject
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update admin
+    update subject
     <set>
-      <if test="record.adminId != null">
-        admin_id = #{record.adminId,jdbcType=CHAR},
+      <if test="record.subjectId != null">
+        subject_id = #{record.subjectId,jdbcType=INTEGER},
       </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=CHAR},
+      <if test="record.subjectName != null">
+        subject_name = #{record.subjectName,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -141,25 +141,25 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update admin
-    set admin_id = #{record.adminId,jdbcType=CHAR},
-      user_id = #{record.userId,jdbcType=CHAR}
+    update subject
+    set subject_id = #{record.subjectId,jdbcType=INTEGER},
+      subject_name = #{record.subjectName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Admin">
-    update admin
+  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Subject">
+    update subject
     <set>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=CHAR},
+      <if test="subjectName != null">
+        subject_name = #{subjectName,jdbcType=VARCHAR},
       </if>
     </set>
-    where admin_id = #{adminId,jdbcType=CHAR}
+    where subject_id = #{subjectId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Admin">
-    update admin
-    set user_id = #{userId,jdbcType=CHAR}
-    where admin_id = #{adminId,jdbcType=CHAR}
+  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Subject">
+    update subject
+    set subject_name = #{subjectName,jdbcType=VARCHAR}
+    where subject_id = #{subjectId,jdbcType=INTEGER}
   </update>
 </mapper>

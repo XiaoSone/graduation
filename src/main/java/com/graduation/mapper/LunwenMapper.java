@@ -4,6 +4,7 @@ import com.graduation.model.Lunwen;
 import com.graduation.model.LunwenExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

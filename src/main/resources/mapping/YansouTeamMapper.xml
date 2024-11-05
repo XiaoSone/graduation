@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.graduation.mapper.RolesMapper">
-<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
-  <resultMap id="BaseResultMap" type="com.graduation.model.Roles">
-    <id column="roles_id" jdbcType="INTEGER" property="rolesId" />
-    <result column="roles_name" jdbcType="CHAR" property="rolesName" />
+<mapper namespace="com.graduation.mapper.YansouTeamMapper">
+<!--<cache type="org.mybatis.caches.redis.RedisCache"/>-->
+  <resultMap id="BaseResultMap" type="com.graduation.model.YansouTeam">
+    <id column="yansou_team_id" jdbcType="INTEGER" property="yansouTeamId" />
+    <result column="yansou_team_name" jdbcType="VARCHAR" property="yansouTeamName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,15 +65,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    roles_id, roles_name
+    yansou_team_id, yansou_team_name
   </sql>
-  <select id="selectByExample" parameterType="com.graduation.model.RolesExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.graduation.model.YansouTeamExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from roles
+    from yansou_team
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -84,56 +84,56 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from roles
-    where roles_id = #{rolesId,jdbcType=INTEGER}
+    from yansou_team
+    where yansou_team_id = #{yansouTeamId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from roles
-    where roles_id = #{rolesId,jdbcType=INTEGER}
+    delete from yansou_team
+    where yansou_team_id = #{yansouTeamId,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.graduation.model.RolesExample">
-    delete from roles
+  <delete id="deleteByExample" parameterType="com.graduation.model.YansouTeamExample">
+    delete from yansou_team
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.graduation.model.Roles">
-    insert into roles (roles_id, roles_name)
-    values (#{rolesId,jdbcType=INTEGER}, #{rolesName,jdbcType=CHAR})
+  <insert id="insert" parameterType="com.graduation.model.YansouTeam">
+    insert into yansou_team (yansou_team_id, yansou_team_name)
+    values (#{yansouTeamId,jdbcType=INTEGER}, #{yansouTeamName,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.graduation.model.Roles">
-    insert into roles
+  <insert id="insertSelective" parameterType="com.graduation.model.YansouTeam">
+    insert into yansou_team
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="rolesId != null">
-        roles_id,
+      <if test="yansouTeamId != null">
+        yansou_team_id,
       </if>
-      <if test="rolesName != null">
-        roles_name,
+      <if test="yansouTeamName != null">
+        yansou_team_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="rolesId != null">
-        #{rolesId,jdbcType=INTEGER},
+      <if test="yansouTeamId != null">
+        #{yansouTeamId,jdbcType=INTEGER},
       </if>
-      <if test="rolesName != null">
-        #{rolesName,jdbcType=CHAR},
+      <if test="yansouTeamName != null">
+        #{yansouTeamName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.graduation.model.RolesExample" resultType="java.lang.Long">
-    select count(*) from roles
+  <select id="countByExample" parameterType="com.graduation.model.YansouTeamExample" resultType="java.lang.Long">
+    select count(*) from yansou_team
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update roles
+    update yansou_team
     <set>
-      <if test="record.rolesId != null">
-        roles_id = #{record.rolesId,jdbcType=INTEGER},
+      <if test="record.yansouTeamId != null">
+        yansou_team_id = #{record.yansouTeamId,jdbcType=INTEGER},
       </if>
-      <if test="record.rolesName != null">
-        roles_name = #{record.rolesName,jdbcType=CHAR},
+      <if test="record.yansouTeamName != null">
+        yansou_team_name = #{record.yansouTeamName,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -141,25 +141,36 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update roles
-    set roles_id = #{record.rolesId,jdbcType=INTEGER},
-      roles_name = #{record.rolesName,jdbcType=CHAR}
+    update yansou_team
+    set yansou_team_id = #{record.yansouTeamId,jdbcType=INTEGER},
+      yansou_team_name = #{record.yansouTeamName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Roles">
-    update roles
+  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.YansouTeam">
+    update yansou_team
     <set>
-      <if test="rolesName != null">
-        roles_name = #{rolesName,jdbcType=CHAR},
+      <if test="yansouTeamName != null">
+        yansou_team_name = #{yansouTeamName,jdbcType=VARCHAR},
       </if>
     </set>
-    where roles_id = #{rolesId,jdbcType=INTEGER}
+    where yansou_team_id = #{yansouTeamId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Roles">
-    update roles
-    set roles_name = #{rolesName,jdbcType=CHAR}
-    where roles_id = #{rolesId,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="com.graduation.model.YansouTeam">
+    update yansou_team
+    set yansou_team_name = #{yansouTeamName,jdbcType=VARCHAR}
+    where yansou_team_id = #{yansouTeamId,jdbcType=INTEGER}
   </update>
+  
+  <resultMap type="com.graduation.model.YansouTeam" id="yansouPlus" extends="BaseResultMap">
+  	<collection property="yansouTeachers" column="yansou_team_id" select="com.graduation.mapper.YansouTeacherMapper.selectTeacherInfoByYansouTeamId"></collection>
+  </resultMap>
+  <select id="selectYanSouInfoByid" resultMap="yansouPlus">
+      select 
+    <include refid="Base_Column_List" />
+    from yansou_team
+    where yansou_team_id = #{yansouTeamId,jdbcType=INTEGER}
+  </select>
+  
 </mapper>

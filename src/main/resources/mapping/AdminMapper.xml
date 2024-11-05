@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.graduation.mapper.ProjectFromMapper">
-<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
-  <resultMap id="BaseResultMap" type="com.graduation.model.ProjectFrom">
-    <id column="project_from_id" jdbcType="INTEGER" property="projectFromId" />
-    <result column="project_from_name" jdbcType="VARCHAR" property="projectFromName" />
+<mapper namespace="com.graduation.mapper.AdminMapper">
+<!--<cache type="org.mybatis.caches.redis.RedisCache"/>-->
+  <resultMap id="BaseResultMap" type="com.graduation.model.Admin">
+    <id column="admin_id" jdbcType="CHAR" property="adminId" />
+    <result column="user_id" jdbcType="CHAR" property="userId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,15 +65,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    project_from_id, project_from_name
+    admin_id, user_id
   </sql>
-  <select id="selectByExample" parameterType="com.graduation.model.ProjectFromExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.graduation.model.AdminExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from project_from
+    from admin
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -81,59 +81,59 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from project_from
-    where project_from_id = #{projectFromId,jdbcType=INTEGER}
+    from admin
+    where admin_id = #{adminId,jdbcType=CHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from project_from
-    where project_from_id = #{projectFromId,jdbcType=INTEGER}
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from admin
+    where admin_id = #{adminId,jdbcType=CHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.graduation.model.ProjectFromExample">
-    delete from project_from
+  <delete id="deleteByExample" parameterType="com.graduation.model.AdminExample">
+    delete from admin
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.graduation.model.ProjectFrom">
-    insert into project_from (project_from_id, project_from_name)
-    values (#{projectFromId,jdbcType=INTEGER}, #{projectFromName,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.graduation.model.Admin">
+    insert into admin (admin_id, user_id)
+    values (#{adminId,jdbcType=CHAR}, #{userId,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.graduation.model.ProjectFrom">
-    insert into project_from
+  <insert id="insertSelective" parameterType="com.graduation.model.Admin">
+    insert into admin
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="projectFromId != null">
-        project_from_id,
+      <if test="adminId != null">
+        admin_id,
       </if>
-      <if test="projectFromName != null">
-        project_from_name,
+      <if test="userId != null">
+        user_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="projectFromId != null">
-        #{projectFromId,jdbcType=INTEGER},
+      <if test="adminId != null">
+        #{adminId,jdbcType=CHAR},
       </if>
-      <if test="projectFromName != null">
-        #{projectFromName,jdbcType=VARCHAR},
+      <if test="userId != null">
+        #{userId,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.graduation.model.ProjectFromExample" resultType="java.lang.Long">
-    select count(*) from project_from
+  <select id="countByExample" parameterType="com.graduation.model.AdminExample" resultType="java.lang.Long">
+    select count(*) from admin
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update project_from
+    update admin
     <set>
-      <if test="record.projectFromId != null">
-        project_from_id = #{record.projectFromId,jdbcType=INTEGER},
+      <if test="record.adminId != null">
+        admin_id = #{record.adminId,jdbcType=CHAR},
       </if>
-      <if test="record.projectFromName != null">
-        project_from_name = #{record.projectFromName,jdbcType=VARCHAR},
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=CHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -141,25 +141,25 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update project_from
-    set project_from_id = #{record.projectFromId,jdbcType=INTEGER},
-      project_from_name = #{record.projectFromName,jdbcType=VARCHAR}
+    update admin
+    set admin_id = #{record.adminId,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.ProjectFrom">
-    update project_from
+  <update id="updateByPrimaryKeySelective" parameterType="com.graduation.model.Admin">
+    update admin
     <set>
-      <if test="projectFromName != null">
-        project_from_name = #{projectFromName,jdbcType=VARCHAR},
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=CHAR},
       </if>
     </set>
-    where project_from_id = #{projectFromId,jdbcType=INTEGER}
+    where admin_id = #{adminId,jdbcType=CHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.graduation.model.ProjectFrom">
-    update project_from
-    set project_from_name = #{projectFromName,jdbcType=VARCHAR}
-    where project_from_id = #{projectFromId,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="com.graduation.model.Admin">
+    update admin
+    set user_id = #{userId,jdbcType=CHAR}
+    where admin_id = #{adminId,jdbcType=CHAR}
   </update>
 </mapper>
