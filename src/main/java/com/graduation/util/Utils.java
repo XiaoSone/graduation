@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.UUID;
-//import sun.misc.BASE64Encoder;
 
 public class Utils {
 	

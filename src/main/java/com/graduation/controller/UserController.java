@@ -17,8 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 
+//@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
 @Controller
-//@RequestMapping("/userController")
+@RequestMapping("/userController")
 public class UserController {
 	
 	@Autowired
@@ -42,38 +43,40 @@ public class UserController {
 	}
 	//登录
 	@PostMapping("/login")
-	public @ResponseBody String login(HttpSession session,String randStr,String account,String password) {
-		String randStr2=(String) session.getAttribute("randStr");
-			//if(randStr2!=null&&randStr2.equals(randStr)) {
-			if(randStr != null) {
-				password=Utils.md5(password);
-				Subject currentUser = SecurityUtils.getSubject();
-				if (!currentUser.isAuthenticated()) {
-					//把用户名和密码封装为UsernamePasswordToken
-		            UsernamePasswordToken token = new UsernamePasswordToken(account, password);
-		            try {
-		            	//执行登录
-		                currentUser.login(token);
-		                return toUI(session,account,password);
-						//return "登录成功";
-		            }
-		            //用户不存在
-		            catch (UnknownAccountException ae) {
-		            	return "用户不存在";
-		            }
-		            //用户被锁定
-		            catch (LockedAccountException e) {
-		            	return "用户名或密码错误";
-					}
-				}else {
-					return toUI(session,account,password);
+	public @ResponseBody String login(HttpServletRequest request,@RequestParam("randStr")String randStr,@RequestParam("account")String account,@RequestParam("password")String password) {
+		String randStr2 = (String) request.getSession().getAttribute("captcha");
+		//System.out.println("login中从session获得的验证码："+randStr2);
+		if(randStr2!=null&&randStr2.equals(randStr)) {
+		//if(randStr.equals("1234")) {
+			password=Utils.md5(password);
+			Subject currentUser = SecurityUtils.getSubject();
+			if (!currentUser.isAuthenticated()) {
+				//把用户名和密码封装为UsernamePasswordToken
+				UsernamePasswordToken token = new UsernamePasswordToken(account, password);
+				try {
+					//执行登录
+					currentUser.login(token);
+					//return toUI(session,account,password);
+					return "page2";
+				}
+				//用户不存在
+				catch (UnknownAccountException ae) {
+					return "用户不存在";
+				}
+				//用户被锁定
+				catch (LockedAccountException e) {
+					return "account or passwordError";
 				}
 			}else {
-				return "验证码错误";
+				//return toUI(session,account,password);
+				return "account or passwordError";
 			}
+		}else {
+			return "randStrError";
+		}
 	}
 	//登录成功跳转
-	private String toUI(HttpSession session,String account,String password) {
+	public String toUI(HttpSession session,String account,String password) {
 		User user = userService.login(account, password);
 		if(user!=null) {
 			if(2==user.getUserRoles()) {
@@ -91,7 +94,8 @@ public class UserController {
 	}
 	//退出登录
 	@RequestMapping("/logout")
-	public @ResponseBody String logout(HttpSession session) {
+	public @ResponseBody String logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
 		session.removeAttribute("user");
 		//return "redirect:http://localhost:8080/graduation/login.html";
 		return "退出成功";
