@@ -39,10 +39,11 @@ public class DownController {
 
     @RequestMapping("/downloadResource")
     public @ResponseBody String downloadResource(HttpSession session, HttpServletResponse response,
-                                                 HttpServletRequest request, @RequestParam(required=true)String fileName) throws Exception {
-        if(fileName==null||fileName=="") {
+                                                 HttpServletRequest request, @RequestParam("filename")String fileName) throws Exception {
+        if(fileName.isEmpty()) {
             return null;
         }
+        System.out.println(fileName);
         String dataDir=request.getServletContext().getRealPath("/WEB-INF/file");
         Path path= Paths.get(dataDir, fileName);
         if(Files.exists(path)) {

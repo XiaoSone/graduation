@@ -57,7 +57,7 @@ public class ShiroConfig {
             put("/userController/login", "anon");
             put("/captcha", "anon");
             put("/informController/*", "anon");
-            put("/downController/getSubDown", "anon");
+            put("/downController/*", "anon");
             put("/css/**", "anon");
             put("/js/**", "anon");
             put("/images/**", "anon");
