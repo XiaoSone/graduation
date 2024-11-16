@@ -281,7 +281,7 @@
   </select>
   
   <select id="thisTeacherYesProjectNum" resultType="int">
-  	select count(*) from project where teacher_id=#{teacherId} and student_id IS NOT NULL
+  	select count(*) from project where teacher_id=#{teacherId} and student_id IS NULL
   </select>
   
   <select id="getProjectByTeacherId" resultType="com.graduation.model.Project">

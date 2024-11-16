@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 //@CrossOrigin(origins = "http://localhost:8081", allowCredentials = "true")
 @Controller
@@ -44,34 +46,30 @@ public class UserController {
 	//登录
 	@PostMapping("/login")
 	public @ResponseBody String login(HttpServletRequest request,@RequestParam("randStr")String randStr,@RequestParam("account")String account,@RequestParam("password")String password) {
+		Subject subject = SecurityUtils.getSubject();
+
 		String randStr2 = (String) request.getSession().getAttribute("captcha");
-		//System.out.println("login中从session获得的验证码："+randStr2);
-		if(randStr2!=null&&randStr2.equals(randStr)) {
-		//if(randStr.equals("1234")) {
-			password=Utils.md5(password);
-			Subject currentUser = SecurityUtils.getSubject();
-			if (!currentUser.isAuthenticated()) {
-				//把用户名和密码封装为UsernamePasswordToken
-				UsernamePasswordToken token = new UsernamePasswordToken(account, password);
-				try {
-					//执行登录
-					currentUser.login(token);
-					//return toUI(session,account,password);
-					return "page2";
+		if (randStr2 != null && randStr2.equals(randStr)) {
+			password = Utils.md5(password);
+			UsernamePasswordToken token  = new UsernamePasswordToken(account,password);
+			User user = userService.isUser(account);
+			if (user != null) {
+				if(2==user.getUserRoles()) {
+					subject.login(token);//shiro处理身份认证
+					return "/sindex";
+					//return "学生登录成功";
+				} else if(1==user.getUserRoles()) {
+					subject.login(token);//shiro处理身份认证
+					return "/tcontent";
+					//tindex
+					//return "教师登录成功";
+				} else {
+					return "用户信息有误";
 				}
-				//用户不存在
-				catch (UnknownAccountException ae) {
-					return "用户不存在";
-				}
-				//用户被锁定
-				catch (LockedAccountException e) {
-					return "account or passwordError";
-				}
-			}else {
-				//return toUI(session,account,password);
-				return "account or passwordError";
+			} else {
+				 return "用户不存在";
 			}
-		}else {
+		} else {
 			return "randStrError";
 		}
 	}
@@ -81,13 +79,13 @@ public class UserController {
 		if(user!=null) {
 			if(2==user.getUserRoles()) {
 				session.setAttribute("user", user);
-				//return "student/sindex.html";
-				return "学生登录成功";
+				return "/scontent";
+				//return "学生登录成功";
 			}
 			if(1==user.getUserRoles()) {
 				session.setAttribute("user", user);
-				//return "teacher/tindex.html";
-				return "教师登录成功";
+				return "/tcontent";
+				//return "教师登录成功";
 			}
 		}
 		return "用户名或密码错误";
@@ -95,44 +93,66 @@ public class UserController {
 	//退出登录
 	@RequestMapping("/logout")
 	public @ResponseBody String logout(HttpServletRequest request) {
+		Subject currentUser = SecurityUtils.getSubject();
+
 		HttpSession session = request.getSession();
-		session.removeAttribute("user");
-		//return "redirect:http://localhost:8080/graduation/login.html";
-		return "退出成功";
+		if(currentUser.isAuthenticated()) {
+			//session.removeAttribute("user_stu");
+			currentUser.logout();
+		}else {
+			//session.removeAttribute("user_tea");
+		}
+		return "/login";
 	}
 	//更新用户信息
 	@RequestMapping(value="/updateInfo",method=RequestMethod.POST)
 	public @ResponseBody boolean updateStudentInfo(User user,
 			@RequestParam(value="portrait",required=false)MultipartFile portrait,HttpServletRequest request) {
-		if(portrait!=null&&portrait.getSize()>0) {
-			if(portrait.getSize()>(10*1024*1024)) {
-				return false;
-			}
-			String filename=portrait.getOriginalFilename();
-			String dbPath=request.getServletContext().getContextPath()+"/portrait/"+user.getUserId();
-			String basePath=request.getServletContext().getRealPath("/portrait/"+user.getUserId());
-			new File(basePath).mkdir();
-        	File portraitFile=new File(basePath,filename);
-        	try {
-				portrait.transferTo(portraitFile);
-				user.setUserPortrait(dbPath+"/"+filename);
-				return userService.updateUserInfo(user);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} 
-        	
+		Subject currentUser = SecurityUtils.getSubject();
+		String useraccount = (String) currentUser.getPrincipal();
+		System.out.println("更新中的用户："+useraccount);
+		if(currentUser.isAuthenticated()) {
+			user.setUserId((userService.isUser(useraccount)).getUserId());
+			System.out.println(user);
+			//if(portrait!=null&&portrait.getSize()>0) {
+			//	if(portrait.getSize()>(10*1024*1024)) {
+			//		return false;
+			//	}
+			//	String filename=portrait.getOriginalFilename();
+			//	String dbPath=request.getServletContext().getContextPath()+"/portrait/"+user.getUserId();
+			//	String basePath=request.getServletContext().getRealPath("/portrait/"+user.getUserId());
+			//	new File(basePath).mkdir();
+			//	File portraitFile=new File(basePath,filename);
+			//	try {
+			//		portrait.transferTo(portraitFile);
+			//		user.setUserPortrait(dbPath+"/"+filename);
+			//		return userService.updateUserInfo(user);
+			//	} catch (Exception e) {
+			//		e.printStackTrace();
+			//	}
+			//
+			//}
+			return userService.updateUserInfo(user);
 		}
-		return userService.updateUserInfo(user);
+		System.out.println("更新失败");
+		return false;
 	}
 	//更新密码
-	@RequestMapping(value="/updatePwd",method=RequestMethod.PUT)
+	@RequestMapping(value="/updatePwd",method=RequestMethod.POST)
 	public @ResponseBody boolean updateStudentPwd(User user,HttpSession session) {
+		Subject currentUser = SecurityUtils.getSubject();
+		String useraccount = (String) currentUser.getPrincipal();
+		user.setUserId(userService.isUser(useraccount).getUserId());
 		String password=user.getUserPassword();
-		if(password!=null&&!password.isEmpty()) {
+		System.out.println(user);
+		if(password!=null && !password.isEmpty() && currentUser.isAuthenticated()) {
 			user.setUserPassword(Utils.md5(password));
+			System.out.println(user);
 			boolean bool = userService.updateUserInfo(user);
 			if(bool==true) {
-				session.removeAttribute("user");
+				currentUser.logout();
+				System.out.println("已退出登录");
+				//session.removeAttribute("user");
 				return true;
 			}
 		}

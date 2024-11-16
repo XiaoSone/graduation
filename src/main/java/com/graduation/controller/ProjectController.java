@@ -8,6 +8,9 @@ import com.graduation.service.StudentService;
 import com.graduation.service.TeacherService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.graduation.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -24,6 +28,8 @@ public class ProjectController {
 	
 	@Autowired
 	private ProjectService projectService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private TeacherService teacherService;
 	@Autowired
@@ -47,11 +53,18 @@ public class ProjectController {
 	@ResponseBody
 	@RequestMapping(value="/thisTeacherYesProjectNum",method=RequestMethod.GET)
 	public int thisTeacherYesProjectNum(HttpSession session) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
+
+		//User user=(User) session.getAttribute("user");
+		//System.out.println(user.getUserName());
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
 				String teacherId = teacher.getTeacherId();
+				System.out.println(teacherId);
 				return projectService.thisTeacherYesProjectNum(teacherId);
 			}
 		}
@@ -60,8 +73,13 @@ public class ProjectController {
 	
 	@ResponseBody
 	@RequestMapping(value="/thisTeacherUndefinedStudentNum",method=RequestMethod.GET)
-	public int thisTeacherUndefinedStudentNum(HttpSession session) {
-		User user=(User) session.getAttribute("user");
+	public int thisTeacherUndefinedStudentNum(HttpServletRequest request) {
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
+
+		//User user=(User) request.getSession().getAttribute("user");
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -75,13 +93,17 @@ public class ProjectController {
 	/**
 	 * 添加与更新方法
 	 * @param project
-	 * @param session
+	 * @param request
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value="/insertSelective",method=RequestMethod.POST)
-	public boolean insertSelective(Project project,HttpSession session) {
-		User user=(User) session.getAttribute("user");
+	public boolean insertSelective(Project project,HttpServletRequest request) {
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
+		//User user=(User) request.getSession().getAttribute("user");
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -98,11 +120,16 @@ public class ProjectController {
 	
 	@ResponseBody
 	@RequestMapping(value="/getProjectByTeacherId")
-	public List<Project> getProjectByTeacherId(HttpSession session){
-		User user=(User) session.getAttribute("user");
+	public List<Project> getProjectByTeacherId(HttpServletRequest request){
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
+		//User user=(User) request.getSession().getAttribute("user");
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
+				System.out.println("getProjectByTeacherId：" + projectService.getProjectByTeacherId(teacher.getTeacherId()).toString());
 				return projectService.getProjectByTeacherId(teacher.getTeacherId());
 			}
 		}

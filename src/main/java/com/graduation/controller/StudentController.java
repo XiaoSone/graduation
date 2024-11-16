@@ -5,7 +5,10 @@ import com.graduation.model.Student;
 import com.graduation.model.User;
 import com.graduation.service.ProjectService;
 import com.graduation.service.StudentService;
+import com.graduation.service.UserService;
 import com.graduation.util.WordUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,9 @@ import java.util.Map;
 @Controller
 @RequestMapping("/studentController")
 public class StudentController {
-	
+
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private StudentService studentService;
 	@Autowired
@@ -30,7 +35,10 @@ public class StudentController {
 	@RequestMapping("/hasChooseProject")
 	public Student hasChooseProject(HttpSession session,HttpServletResponse response) {
 		response.setContentType("application/json;charset=utf-8");
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -46,7 +54,10 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping(value="/updateProjectByStudentId/{projectId}",method=RequestMethod.PUT)
 	public boolean updateProjectByStudentId(HttpSession session,@PathVariable("projectId")String projectId) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -61,7 +72,10 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping(value="/updateTeacherId")
 	public boolean updateTeacherId(HttpSession session,String teacherId) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -112,7 +126,10 @@ public class StudentController {
 		if(studentId!=null&&studentId!="") {
 			return studentService.getStuAndProject(studentId);
 		}
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -129,7 +146,10 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping("/getStuAndProjectAndTeacher")
 	public Student getStuAndProjectAndTeacher(HttpSession session,HttpServletResponse response) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -157,8 +177,11 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping("/findStudent")
 	public Student findStudent(HttpSession session) {
-		User user=(User) session.getAttribute("user");
-		if(user!=null) {
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		if(subject.isAuthenticated()) {
+			String username = (String) subject.getPrincipal();
+			User user = userService.isUser(username);
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
 				return student;
@@ -181,7 +204,10 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping("/getThisStudentScore")
 	public Integer getThisStudentScore(HttpSession session) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {
@@ -217,7 +243,10 @@ public class StudentController {
 			}
 			return;
 		}else {
-			User user=(User) session.getAttribute("user");
+			//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 			if(user!=null) {
 				Student student = studentService.getStudentByUserId(user.getUserId());
 				if(student!=null) {
@@ -261,7 +290,10 @@ public class StudentController {
 			}
 			return;
 		}else {
-			User user=(User) session.getAttribute("user");
+			//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 			if(user!=null) {
 				Student student = studentService.getStudentByUserId(user.getUserId());
 				if(student!=null) {
@@ -305,7 +337,10 @@ public class StudentController {
 			}
 			return;
 		}else {
-			User user=(User) session.getAttribute("user");
+			//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 			if(user!=null) {
 				Student student = studentService.getStudentByUserId(user.getUserId());
 				if(student!=null) {

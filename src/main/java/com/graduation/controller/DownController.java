@@ -7,14 +7,10 @@ import com.graduation.service.DownService;
 import com.graduation.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,12 +34,12 @@ public class DownController {
     }
 
     @RequestMapping("/downloadResource")
-    public @ResponseBody String downloadResource(HttpSession session, HttpServletResponse response,
-                                                 HttpServletRequest request, @RequestParam("filename")String fileName) throws Exception {
+    public @ResponseBody String downloadResource(HttpServletResponse response,
+                                                 HttpServletRequest request, @RequestParam("fileName")String fileName) throws Exception {
         if(fileName.isEmpty()) {
             return null;
         }
-        System.out.println(fileName);
+        //System.out.println(fileName);
         String dataDir=request.getServletContext().getRealPath("/WEB-INF/file");
         Path path= Paths.get(dataDir, fileName);
         if(Files.exists(path)) {

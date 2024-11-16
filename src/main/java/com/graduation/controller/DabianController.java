@@ -5,6 +5,9 @@ import com.graduation.model.Student;
 import com.graduation.model.User;
 import com.graduation.service.DabianService;
 import com.graduation.service.StudentService;
+import com.graduation.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpSession;
 public class DabianController {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private DabianService dabianService;
     @Autowired
     private StudentService studentService;
@@ -25,7 +30,10 @@ public class DabianController {
     @ResponseBody
     @RequestMapping("/getThisStudentScore")
     public Integer getThisStudentScore(HttpSession session) {
-        User user=(User) session.getAttribute("user");
+        //通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
         if(user!=null) {
             Student student = studentService.getStudentByUserId(user.getUserId());
             if(student!=null) {

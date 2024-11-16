@@ -4,7 +4,10 @@ import com.graduation.model.Student;
 import com.graduation.model.User;
 import com.graduation.model.YansouTeam;
 import com.graduation.service.StudentService;
+import com.graduation.service.UserService;
 import com.graduation.service.YansoouService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +18,9 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/yansouController")
 public class YansouController {
-	
+
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private YansoouService yansoouService;
 	@Autowired
@@ -24,7 +29,10 @@ public class YansouController {
 	@ResponseBody
 	@RequestMapping("/selectYanSouInfoByid")
 	public YansouTeam selectYanSouInfoByid(HttpSession session) {
-		User user=(User) session.getAttribute("user");
+		//通过shiro获得当前会话用户信息
+		Subject subject = SecurityUtils.getSubject();
+		String username = (String) subject.getPrincipal();
+		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
 			if(student!=null) {

@@ -25,7 +25,7 @@ public class InformController {
 		PageHelper.startPage(pageNum, pageSize);
 		List<Inform> list = informService.getAllInfrom();
 		PageInfo pageInfo=new PageInfo(list,navigatePages);
-		System.out.println(pageInfo);
+		//System.out.println(pageInfo);
 		return pageInfo;
 	}
 	
