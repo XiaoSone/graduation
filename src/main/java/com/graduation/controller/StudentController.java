@@ -39,10 +39,17 @@ public class StudentController {
 		Subject subject = SecurityUtils.getSubject();
 		String username = (String) subject.getPrincipal();
 		User user = userService.isUser(username);
+		System.out.println(user);
+		System.out.println("************************************************************");
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
+			System.out.println(student);
+			System.out.println("************************************************************");
 			if(student!=null) {
-				Project project = projectService.getProjectByStudentId(student.getStudentId());
+				//Project project = projectService.getProjectByStudentId(student.getStudentId());
+				Project project = student.getProject();
+				System.out.println(project);
+				System.out.println("************************************************************");
 				if(project!=null) {
 					return student;
 				}
@@ -192,12 +199,12 @@ public class StudentController {
 	
 	@RequestMapping("/gotoTstudentscore")
 	public String gotoTstudentscore(@RequestParam(required=true)String studentId) {
-		return "redirect:http://localhost:8080/graduation/teacher/tstudentscore.html?studentId="+studentId;
+		return "redirect:http://localhost:8081/#/tstudentscore?studentId="+studentId;
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/updateScore",method=RequestMethod.PUT)
-	public boolean updateScore(Student student) {
+	@RequestMapping(value="/updateScore",method=RequestMethod.POST)
+	public boolean updateScore(@RequestBody Student student) {
 		return studentService.updateStudent(student);
 	}
 	
@@ -227,67 +234,55 @@ public class StudentController {
 	@ResponseBody
 	@RequestMapping(value="/downKtbg",method=RequestMethod.GET)
 	public void downKtbg(HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,
-			String studentId) {
+			HttpServletRequest request,HttpServletResponse response,@RequestParam String studentId) {
+		String templateFolder = System.getProperty("user.dir") + "\\WEB-INF\\template\\";
+		WordUtils.templateFolder = templateFolder;
 		if(studentId!=null&&!studentId.isEmpty()) {
 			Student stuAndKtbg = studentService.getStudentAndKtbgBySid(studentId);
-			Map<String, Object> map=new HashMap<>();
-			map.put("user", stuAndKtbg.getUser());
-			map.put("classInfo", stuAndKtbg.getClassInfo());
-			map.put("project", stuAndKtbg.getProject());
-			map.put("ktbg", stuAndKtbg.getKtbg());
-			try {
-				 WordUtils.exportMillCertificateWord(request,response,map,"开题报告.ftl","开题报告.doc");  
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			getKtbgMap(request, response, stuAndKtbg);
 			return;
 		}else {
 			//通过shiro获得当前会话用户信息
-		Subject subject = SecurityUtils.getSubject();
-		String username = (String) subject.getPrincipal();
-		User user = userService.isUser(username);
-			if(user!=null) {
-				Student student = studentService.getStudentByUserId(user.getUserId());
-				if(student!=null) {
-					if(student.getProjectId()!=null&&student.getProjectId()!=0) {
-						Student stuAndKtbg = studentService.getStudentAndKtbgBySid(student.getStudentId());
-						Map<String, Object> map=new HashMap<>();
-						map.put("user", stuAndKtbg.getUser());
-						map.put("classInfo", stuAndKtbg.getClassInfo());
-						map.put("project", stuAndKtbg.getProject());
-						map.put("ktbg", stuAndKtbg.getKtbg());
-						try {
-							WordUtils.exportMillCertificateWord(request,response,map,"开题报告.ftl","开题报告.doc");  
-						} catch (IOException e) {
-							e.printStackTrace();
+			Subject subject = SecurityUtils.getSubject();
+			String username = (String) subject.getPrincipal();
+			User user = userService.isUser(username);
+				if(user!=null) {
+					Student student = studentService.getStudentByUserId(user.getUserId());
+					if(student!=null) {
+						if(student.getProjectId()!=null&&student.getProjectId()!=0) {
+							Student stuAndKtbg = studentService.getStudentAndKtbgBySid(student.getStudentId());
+							getKtbgMap(request, response, stuAndKtbg);
 						}
 					}
 				}
-			}
 			return;
 		}
 	}
-	
+
+	private Map<String, Object> getKtbgMap(HttpServletRequest request, HttpServletResponse response, Student stuAndKtbg) {
+		Map<String, Object> map=new HashMap<>();
+		map.put("user", stuAndKtbg.getUser());
+		map.put("classInfo", stuAndKtbg.getClassInfo());
+		map.put("project", stuAndKtbg.getProject());
+		map.put("ktbg", stuAndKtbg.getKtbg());
+		//打印map的内容
+		System.out.println(map);
+		try {
+			 WordUtils.exportMillCertificateWord(request,response,map,"开题报告.ftl","开题报告.doc");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
 	//下载免答辩
 	@ResponseBody
 	@RequestMapping(value="/downMdb",method=RequestMethod.GET)
 	public void downMdb(HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,
-			String studentId) {
+			HttpServletRequest request,HttpServletResponse response,@RequestParam String studentId) {
 		if(studentId!=null&&!studentId.isEmpty()) {
 			Student stuAndMdb = studentService.getStudentAndMdbBySid(studentId);
-			Map<String, Object> map=new HashMap<>();
-			map.put("user", stuAndMdb.getUser());
-			map.put("classInfo", stuAndMdb.getClassInfo());
-			map.put("project", stuAndMdb.getProject());
-			map.put("mdb", stuAndMdb.getMdb());
-			map.put("teacher", stuAndMdb.getTeacher());
-			try {
-				 WordUtils.exportMillCertificateWord(request,response,map,"免答辩申请表.ftl","免答辩申请表.doc");  
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			getMdbMap(request, response, stuAndMdb);
 			return;
 		}else {
 			//通过shiro获得当前会话用户信息
@@ -299,30 +294,33 @@ public class StudentController {
 				if(student!=null) {
 					if(student.getProjectId()!=null&&student.getProjectId()!=0) {
 						Student stuAndMdb = studentService.getStudentAndMdbBySid(student.getStudentId());
-						Map<String, Object> map=new HashMap<>();
-						map.put("user", stuAndMdb.getUser());
-						map.put("classInfo", stuAndMdb.getClassInfo());
-						map.put("project", stuAndMdb.getProject());
-						map.put("mdb", stuAndMdb.getMdb());
-						map.put("teacher", stuAndMdb.getTeacher());
-						try {
-							WordUtils.exportMillCertificateWord(request,response,map,"免答辩申请表.ftl","免答辩申请表.doc");  
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						return;
+						getMdbMap(request, response, stuAndMdb);
 					}
 				}
 			}
 		}
 	}
-	
+
+	private void getMdbMap(HttpServletRequest request, HttpServletResponse response, Student stuAndMdb) {
+		Map<String, Object> map=new HashMap<>();
+		map.put("user", stuAndMdb.getUser());
+		map.put("classInfo", stuAndMdb.getClassInfo());
+		map.put("project", stuAndMdb.getProject());
+		map.put("mdb", stuAndMdb.getMdb());
+		map.put("teacher", stuAndMdb.getTeacher());
+		try {
+			 WordUtils.exportMillCertificateWord(request,response,map,"免答辩申请表.ftl","免答辩申请表.doc");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+
 	//下载中期检查
 	@ResponseBody
 	@RequestMapping(value="/downZqjc",method=RequestMethod.GET)
 	public void downZqjc(HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,
-			String studentId) {
+			HttpServletRequest request,HttpServletResponse response, @RequestParam String studentId) {
 		if(studentId!=null&&!studentId.isEmpty()) {
 			Student stuAndZqjc = studentService.getStudentAndZqjcBySid(studentId);
 			Map<String, Object> map=new HashMap<>();
@@ -331,7 +329,7 @@ public class StudentController {
 			map.put("zqjc", stuAndZqjc.getZqjc());
 			map.put("teacher", stuAndZqjc.getTeacher());
 			try {
-				 WordUtils.exportMillCertificateWord(request,response,map,"中期检查表.ftl","中期检查表.doc");  
+				 WordUtils.exportMillCertificateWord(request,response,map,"中期检查表.ftl","中期检查表.doc");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

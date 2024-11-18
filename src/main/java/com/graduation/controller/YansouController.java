@@ -35,8 +35,9 @@ public class YansouController {
 		User user = userService.isUser(username);
 		if(user!=null) {
 			Student student = studentService.getStudentByUserId(user.getUserId());
+			System.out.println(student);
 			if(student!=null) {
-				if(student.getYansouTeamId()!=null&&!student.getYansouTeamId().isEmpty()) {
+				if(student.getYansouTeamId()!=null && !student.getYansouTeamId().isEmpty()) {
 					return yansoouService.selectYanSouInfoByid(Integer.parseInt(student.getYansouTeamId()));
 				}
 			}

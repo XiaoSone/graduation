@@ -4,6 +4,9 @@ import com.graduation.model.*;
 import com.graduation.service.TeacherService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.graduation.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +24,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/teacherController")
 public class TeacherController {
-	
+
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private TeacherService teacherService;
 	
@@ -46,7 +51,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/findTeacherAndProject")
 	public Teacher findTeacherAndProject(HttpSession session) {
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -62,7 +69,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/findTeacher")
 	public Teacher findTeacher(HttpSession session) {
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -78,7 +87,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/getStudentByTeacherId")
 	public List<Student> getStudentByTeacherId(HttpSession session){
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -91,7 +102,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/getStudentByTeacherId2")
 	public List<Student> getStudentByTeacherId2(HttpSession session){
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -129,7 +142,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/getTeacherYansouInfo")
 	public YansouTeam getTeacherYansouInfo(HttpSession session){
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {
@@ -142,7 +157,9 @@ public class TeacherController {
 	@ResponseBody
 	@RequestMapping("/thisTeacherisLeader")
 	public YansouTeacher thisTeacherisLeader(HttpSession session){
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			return teacherService.thisTeacherisLeader(user);
 		}
@@ -153,7 +170,9 @@ public class TeacherController {
 	@RequestMapping("/getYansouTeamStu")
 	public PageInfo<Student> getYansouTeamStu(HttpSession session,
 			@RequestParam(defaultValue="1")int pageNum,	@RequestParam(defaultValue="8")int pageSize){
-		User user = (User) session.getAttribute("user");
+		Subject subject = SecurityUtils.getSubject();
+		String useraccount = (String) subject.getPrincipal();
+		User  user = userService.isUser(useraccount);
 		if(user!=null) {
 			Teacher teacher = teacherService.findTeacherByUserId(user.getUserId());
 			if(teacher!=null) {

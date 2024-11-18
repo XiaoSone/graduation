@@ -40,7 +40,9 @@ public class DownController {
             return null;
         }
         //System.out.println(fileName);
-        String dataDir=request.getServletContext().getRealPath("/WEB-INF/file");
+        //String dataDir = request.getServletContext().getRealPath("/WEB-INF/file");
+        String dataDir = System.getProperty("user.dir") + "\\WEB-INF\\file\\";
+        //System.out.println("下载地址："+dataDir);
         Path path= Paths.get(dataDir, fileName);
         if(Files.exists(path)) {
             response.setContentType("application/octet-stream");

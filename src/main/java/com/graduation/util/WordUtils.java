@@ -9,29 +9,28 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Map;
 
-public class WordUtils {  
-    //配置信息,代码本身写的还是很可读的,就不过多注解了  
+public class WordUtils {
     private static Configuration configuration = null;
     //这里注意的是利用WordUtils的类加载器动态获得模板文件的位置  
-    private static final String templateFolder =  WordUtils.class.getClassLoader().getResource("../").getPath()+"/templete/";  
-    static {  
-        configuration = new Configuration();  
-        configuration.setDefaultEncoding("utf-8");  
-        try {
-            configuration.setDirectoryForTemplateLoading(new File(templateFolder));  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        }  
-   }  
+    public static String templateFolder;
+    static {
+        configuration = new Configuration(Configuration.VERSION_2_3_21);
+        configuration.setDefaultEncoding("utf-8");
+   }
   
     private WordUtils() {
         throw new AssertionError();  
-    }  
+    }
   
     public static void exportMillCertificateWord(HttpServletRequest request, HttpServletResponse response,
     		Map map, String templeteName, String fileName) throws IOException {  
-        //Template freemarkerTemplate = configuration.getTemplate("开题报告.ftl");  
-        Template freemarkerTemplate = configuration.getTemplate(templeteName);  
+        //Template freemarkerTemplate = configuration.getTemplate("开题报告.ftl");
+        try {
+            configuration.setDirectoryForTemplateLoading(new File(templateFolder));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Template freemarkerTemplate = configuration.getTemplate(templeteName);
         File file = null;  
         InputStream fin = null;  
         ServletOutputStream out = null;  

@@ -5,15 +5,16 @@ import com.graduation.model.Student;
 import com.graduation.model.User;
 import com.graduation.service.LunwenService;
 import com.graduation.service.StudentService;
+import com.graduation.service.UserService;
 import com.graduation.util.Utils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,7 +28,9 @@ import java.util.Date;
 @Controller
 @RequestMapping("/lunwenController")
 public class LunwenController {
-	
+
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private LunwenService lunwenService;
 	@Autowired
@@ -35,7 +38,7 @@ public class LunwenController {
 	
 	@RequestMapping("/gotoTstudentlunwen")
 	public String gotoTstudentlunwen(String studentId) {
-		return "redirect:http://localhost:8080/graduation/teacher/tstudentlunwen.html?studentId="+studentId;
+		return "redirect:http://localhost:8081/#/tstudentlunwen?studentId="+studentId;
 	}
 	
 	@ResponseBody
@@ -60,38 +63,54 @@ public class LunwenController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/upLunwenBySid",method=RequestMethod.PUT)
-	public boolean upLunwenBySid(Lunwen lunwen) {
+	@RequestMapping(value="/upLunwenBySid",method=RequestMethod.POST)
+	public boolean upLunwenBySid(@RequestBody Lunwen lunwen) {
 		return lunwenService.upLunwenBySid(lunwen);
 	}
 	
 	@ResponseBody
 	@RequestMapping(value="/upload_lunwen",method=RequestMethod.POST)
     public boolean saveProduct(@RequestParam(value="lunwen",required=true)MultipartFile lunwen,
-    		@RequestParam("userId")String userId,HttpServletRequest request) {
+    							@RequestParam("userId") String userId,HttpServletRequest request) {
+		System.out.println("开始上传...");
+		System.out.println(lunwen.getSize());
         if(lunwen!=null&&lunwen.getSize()>0) {
         	if(lunwen.getSize()>(10*1024*1024)) {
         		return false;
         	}
+			System.out.println("上传中...");
+			//获取文件名
         	String filename = lunwen.getOriginalFilename();
-        	String basePath=request.getServletContext().getRealPath("/WEB-INF/lunwen/"+userId);
-        	new File(basePath).mkdir();
-        	File lunewenFile=new File(basePath,filename);
+
+			String projectPath = System.getProperty("user.dir");
+			System.out.println(projectPath);
+			String uploadDir = projectPath + "/WEB-INF/lunwen/";
+
+			//创建上传目录
+        	File directory  = new File(uploadDir);
+        	if (!directory .exists()) {
+				directory .mkdirs();
+			}
+        	//文件上传
+			String filePath = uploadDir + File.separator + filename;
+			File destFile = new File(filePath);
         	try {
-        		HttpSession session = request.getSession();
-        		User user = (User) session.getAttribute("user");
+				lunwen.transferTo(destFile);
+				Subject subject = SecurityUtils.getSubject();
+				String useraccount = (String) subject.getPrincipal();
+				User user = userService.isUser(useraccount);
+				//System.out.println(user);
         		if(user!=null) {
         			Student student = studentService.getStudentByUserId(userId);
         			Lunwen lw=new Lunwen();
         			lw.setLunwenDate(new Date());
         			lw.setLunwenName(filename);
-        			lw.setLunwenPath(basePath+"/"+filename);
+        			lw.setLunwenPath("/WEB-INF/lunwen/"+filename);
+					//System.out.println(lw);
         			lunwenService.insertOrUpdate(student.getStudentId(),lw);
         		}else {
 					return false;
 				}
-        		//相同文件会覆盖
-        		lunwen.transferTo(lunewenFile);
         		return true;
         	} catch (Exception e) {
         		e.printStackTrace();
@@ -102,7 +121,7 @@ public class LunwenController {
 	
 	 @RequestMapping("/downloadResource")
 	 public @ResponseBody void downloadResource(HttpServletResponse response,
-			 HttpServletRequest request,String studentId) throws Exception {
+			 HttpServletRequest request,@RequestParam String studentId) throws Exception {
 	     if(studentId==null||studentId.isEmpty()) {
 	    	 return;
 	     }
@@ -110,7 +129,7 @@ public class LunwenController {
 	     if(lunwen==null) {
 	    	 return;
 	     }
-		 String dataDir=lunwen.getLunwenPath();
+		 String dataDir=System.getProperty("user.dir") + lunwen.getLunwenPath();
 	     String fileName=lunwen.getLunwenName();
 		 Path path=Paths.get(dataDir);
 		 if(Files.exists(path)) {

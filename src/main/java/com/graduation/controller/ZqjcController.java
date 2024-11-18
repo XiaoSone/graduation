@@ -4,20 +4,22 @@ import com.graduation.model.Student;
 import com.graduation.model.User;
 import com.graduation.model.Zqjc;
 import com.graduation.service.StudentService;
+import com.graduation.service.UserService;
 import com.graduation.service.ZqjcService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/zqjcController")
 public class ZqjcController {
-	
+
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private ZqjcService zqjcService;
 	@Autowired
@@ -25,7 +27,7 @@ public class ZqjcController {
 	
 	@ResponseBody
 	@RequestMapping(value="/insertSelective",method=RequestMethod.POST)
-	public boolean insertSelective(Zqjc zqjc) {
+	public boolean insertSelective(@RequestBody Zqjc zqjc) {
 		if(zqjc.getZqjcId()==null) {
 			return zqjcService.insertSelective(zqjc);
 		}else {
@@ -35,15 +37,17 @@ public class ZqjcController {
 	
 	@ResponseBody
 	@RequestMapping("/getzqjcByStudentId")
-	public Zqjc getzqjcByStudentId(@RequestParam(value="studentId",required=false)String studentId,
-			HttpSession session) {
+	public Zqjc getzqjcByStudentId() {
+		Subject currentUser = SecurityUtils.getSubject();
+		String useraccount = (String) currentUser.getPrincipal();
+		User user = userService.isUser(useraccount);
+		String studentId = studentService.getStudentByUserId(user.getUserId()).getStudentId();
 		if(studentId!=null&&!studentId.isEmpty()) {
 			Zqjc zqjc = zqjcService.getzqjcByStudentId(studentId);
 			if(zqjc!=null) {
 				return zqjc;
 			}
 		}else {
-			User user = (User) session.getAttribute("user");
 			if(user!=null) {
 				Student student = studentService.getStudentByUserId(user.getUserId());
 				if(student!=null) {
@@ -59,12 +63,12 @@ public class ZqjcController {
 	
 	@RequestMapping("/gotoTzqjc")
 	public String gotoTzqjc(@RequestParam(required=true)String studentId) {
-		return "redirect:http://localhost:8080/graduation/teacher/tzqjc.html?studentId="+studentId;
+		return "redirect:http://localhost:8081/#/tzqjc?studentId="+studentId;
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/updateByPrimaryKeySelective",method=RequestMethod.PUT)
-	public boolean updateByPrimaryKeySelective(Zqjc zqjc) {
+	@RequestMapping(value="/updateByPrimaryKeySelective",method=RequestMethod.POST)
+	public boolean updateByPrimaryKeySelective(@RequestBody Zqjc zqjc) {
 		return zqjcService.updateByPrimaryKeySelective(zqjc);
 	}
 

@@ -21,10 +21,10 @@ public class LoginRealm extends AuthenticatingRealm{
         System.out.println("密码："+user.getUserPassword());
         System.out.println("++++："+getName());
 
-        if (user != null){
-            return new SimpleAuthenticationInfo(username, user.getUserPassword(), getName());
+        if (user == null){
+            throw new UnknownAccountException();
         }else {
-            return null;
+            return new SimpleAuthenticationInfo(username, user.getUserPassword(), getName());
         }
 	}
 
